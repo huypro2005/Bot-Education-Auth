@@ -1,0 +1,9 @@
+.env
+uploads/
+__pycache__/
+exports/
+restore/
+db_backups/
+mysql/
+venv/
+ConnectServer.md

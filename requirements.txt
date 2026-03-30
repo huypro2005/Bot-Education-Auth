@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-telegram-bot
+SQLAlchemy
+PyMySQL
+cryptography
+python-dotenv
+openai
+PyMuPDF
+python-multipart
+pandas
+openpyxl

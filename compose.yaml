@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: student-management-mysql
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "${MYSQL_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./restore:/restore
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    ports:
+      - "8000:8000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: student-management-backend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python main.py"
+
+  backup:
+    image: mysql:8.0
+    container_name: student-management-backup
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./backup:/backup
+      - ./db_backups:/db_backups
+    entrypoint: >
+      sh -c "
+      apt-get update &&
+      apt-get install -y cron &&
+      chmod +x /backup/backup.sh &&
+      crontab /backup/crontab.txt &&
+      cron &&
+      tail -f /dev/null
+      "
+
+volumes:
+  mysql_data:
