@@ -74,6 +74,7 @@ app.add_middleware(
         "http://127.0.0.1",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
+        "https://admin-assistedu.netlify.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
