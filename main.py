@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401 — đăng ký ORM với Base trước create_all
 
-from app.api import admin_router
+from app.api import admin_router, auth_router
 from database import init_db
 import asyncio
 from contextlib import asynccontextmanager
@@ -81,6 +81,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth_router)
 app.include_router(admin_router)
 
 

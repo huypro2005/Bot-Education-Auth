@@ -7,6 +7,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "")
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is missing. Add it to your .env file.")
@@ -119,11 +121,37 @@ def _ensure_announcements_teacher_id_mysql() -> None:
                 "FOREIGN KEY (teacher_id) REFERENCES users(id) ON DELETE CASCADE"
             )
         )
+
+def _ensure_created_admin_mysql() -> None:
+    from app.core.security import hash_password
+    if not ADMIN_USERNAME or not ADMIN_PASSWORD:
+        return
+    if engine.dialect.name != "mysql":
+        return
+    insp = inspect(engine)
+    if "admin_infos" not in insp.get_table_names():
+        return
+    with SessionLocal() as db:
+        admin = db.execute(
+            text("SELECT id FROM admin_infos WHERE username = :username"),
+            {"username": ADMIN_USERNAME},
+        ).fetchone()
+        if not admin:
+            hashed_pw = hash_password(ADMIN_PASSWORD)
+            db.execute(
+                text(
+                    "INSERT INTO admin_infos (username, password, is_active, created_at) "
+                    "VALUES (:username, :pw, TRUE, NOW())"
+                ),
+                {"username": ADMIN_USERNAME, "pw": hashed_pw},
+            )
+            db.commit()
     
 def init_db() -> None:
     Base.metadata.create_all(bind=engine)
     _ensure_request_join_classes_student_id_mysql()
     _ensure_announcements_class_id_mysql()
+    _ensure_created_admin_mysql()
     _ensure_announcements_teacher_id_mysql()
 
 

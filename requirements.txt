@@ -10,3 +10,5 @@ PyMuPDF
 python-multipart
 pandas
 openpyxl
+python-jose[cryptography]
+bcrypt

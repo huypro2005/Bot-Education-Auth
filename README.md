@@ -10,6 +10,7 @@ Backend **FastAPI** + bot **Telegram** + SQLAlchemy ORM + MySQL. Hệ thống qu
 |---|---|
 | [architect.md](architect.md) | Kiến trúc toàn hệ thống, sơ đồ DB, luồng nghiệp vụ, đánh giá điểm mạnh/yếu |
 | [ADMIN_API.md](ADMIN_API.md) | Tất cả REST API `/admin/*` — endpoint, request body, response |
+| [AUTH_API.md](AUTH_API.md) | Xác thực JWT — login, refresh token, cách gọi API từ frontend (có code mẫu) |
 | [errors_fix.md](errors_fix.md) | Các lỗi deploy đã gặp và cách fix (Docker, permissions, cron, backup) |
 | [docs/PHAT_TRIEN_BOT.md](docs/PHAT_TRIEN_BOT.md) | Hướng dẫn phát triển Telegram bot — handlers, services, callback_data |
 | [ConnectServer.md](ConnectServer.md) | Thông tin kết nối server production |

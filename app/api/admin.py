@@ -3,6 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.core.security import get_current_admin
 from app.service import admin as admin_crud
 from app.schemas.admin import (
     ClassCreate,
@@ -21,7 +22,11 @@ from app.schemas.admin import (
 )
 from database import get_db
 
-router = APIRouter(prefix="/admin", tags=["admin"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"],
+    dependencies=[Depends(get_current_admin)],
+)
 
 
 def _map_class_out(class_info) -> ClassOut:
@@ -165,3 +170,4 @@ def update_subject_class_teacher(
         db=db, record_id=subject_class_id, teacher_id=payload.teacher_id
     )
     return _map_subject_class_out(record)
+
