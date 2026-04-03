@@ -4,7 +4,7 @@ set -eu
 
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 DB_HOST="${MYSQL_HOST:-mysql}"
-DB_USER="${MYSQL_USER:-root}"
+DB_USER="root"
 DB_NAME="${MYSQL_DATABASE:?MYSQL_DATABASE is required}"
 
 BACKUP_DIR="/db_backups"
