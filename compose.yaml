@@ -38,9 +38,10 @@ services:
       mysql:
         condition: service_healthy
     volumes:
-      - .:/app
-    command: >
-      sh -c "python main.py"
+      # Chỉ mount các thư mục cần lưu trữ dữ liệu
+      - ./uploads:/app/uploads
+      - ./exports:/app/exports
+    # Xóa block `command` chứa chmod 777. Ứng dụng sẽ tự chạy CMD trong Dockerfile
 
   backup:
     image: mysql:8.0
@@ -56,12 +57,11 @@ services:
       - ./db_backups:/db_backups
     entrypoint: >
       sh -c "
-      apt-get update &&
-      apt-get install -y cron &&
+      microdnf install -y cronie &&
       chmod +x /backup/backup.sh &&
+      chmod 755 /db_backups &&
       crontab /backup/crontab.txt &&
-      cron &&
-      tail -f /dev/null
+      crond -n
       "
 
 volumes:

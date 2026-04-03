@@ -13,6 +13,7 @@ from sqlalchemy import func, or_
 from telegram import User
 
 from models import (
+    VN_TZ,
     Announcement,
     Assignment,
     ClassInfo,
@@ -26,6 +27,7 @@ from models import (
     UserInfo,
     UserRole,
 )
+
 
 
 def display_name_from_telegram(tg_user: User) -> str:
@@ -517,7 +519,7 @@ def list_active_assignments_for_student(db: Session, student: UserInfo) -> list[
     """Danh sách bài tập còn hạn của lớp học sinh."""
     if student.role != UserRole.STUDENT or student.class_id is None:
         return []
-    now = datetime.now(timezone.utc)
+    now = datetime.now(VN_TZ)
     rows = (
         db.query(Assignment, SubjectInfo.name)
         .join(SubjectClass, Assignment.subject_class_id == SubjectClass.id)
@@ -888,7 +890,7 @@ def upsert_submission_for_student(
         old.ai_feedback = ai_feedback
         old.ai_score = ai_score
         old.teacher_score = None
-        old.submitted_at = datetime.now(timezone.utc)
+        old.submitted_at = datetime.now(VN_TZ)
         db.commit()
         return True, "Đã cập nhật bài nộp mới."
 
@@ -896,7 +898,7 @@ def upsert_submission_for_student(
         old.ai_feedback = ai_feedback
         old.ai_score = ai_score
         old.teacher_score = None
-        old.submitted_at = datetime.now(timezone.utc)
+        old.submitted_at = datetime.now(VN_TZ)
         db.commit()
         return True, "Đã cập nhật bài nộp."
 
@@ -938,12 +940,12 @@ def upsert_submission_file_only_for_student(
         except OSError:
             pass
         old.file_path = file_path
-        old.submitted_at = datetime.now(timezone.utc)
+        old.submitted_at = datetime.now(VN_TZ)
         db.commit()
         return True, "Đã cập nhật file bài nộp."
 
     if old is not None:
-        old.submitted_at = datetime.now(timezone.utc)
+        old.submitted_at = datetime.now(VN_TZ)
         db.commit()
         return True, "Đã cập nhật bài nộp."
 

@@ -2,8 +2,6 @@
 
 set -eu
 
-umask 077
-
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 DB_HOST="${MYSQL_HOST:-mysql}"
 DB_USER="${MYSQL_USER:-root}"
