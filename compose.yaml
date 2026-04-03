@@ -37,11 +37,15 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    user: "0:0"
     volumes:
-      # Chỉ mount các thư mục cần lưu trữ dữ liệu
       - ./uploads:/app/uploads
       - ./exports:/app/exports
-    # Xóa block `command` chứa chmod 777. Ứng dụng sẽ tự chạy CMD trong Dockerfile
+    command: >
+      sh -c "
+      chmod -R 777 /app/uploads /app/exports &&
+      python main.py
+      "
 
   backup:
     image: mysql:8.0
